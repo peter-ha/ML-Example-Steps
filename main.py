@@ -82,6 +82,7 @@ def get_dataset(dataset='train', shuffle=True, batch_size=250, buffer_size=20000
     # TODO: We load 10 images parallel. That might be too much.
     data = data.map(prepare_image_fn, 10)
     data = data.batch(batch_size)
+    data = data.apply(tf.contrib.data.ignore_errors())
 
     # Use this, if you have a proper gpu :)
     # data = data.apply(tf.contrib.data.map_and_batch(
