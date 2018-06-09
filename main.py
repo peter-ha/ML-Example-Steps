@@ -80,7 +80,7 @@ def get_dataset(dataset='train', shuffle=True, batch_size=250, buffer_size=20000
 
     # use this, if you have a weaker gpu :(
     # TODO: We load 10 images parallel. That might be too much.
-    data = data.map(prepare_image_fn, 10)
+    data = data.map(prepare_image_fn, 4)
     data = data.batch(batch_size)
     data = data.apply(tf.contrib.data.ignore_errors())
 
@@ -148,7 +148,7 @@ def cnn_model_fn(features, labels, mode):
 
     # Configure the Training Op (for TRAIN mode)
     if mode == tf.estimator.ModeKeys.TRAIN:
-        # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.002)
+        # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001)
         optimizer = tf.train.MomentumOptimizer(learning_rate=0.001, momentum=0.9)
         train_op = optimizer.minimize(
             loss=loss,
@@ -218,18 +218,18 @@ def main(argv):
 
             prediction = predictions.__next__()
 
-            image = np.reshape(image, image.shape[-3:])
+            #image = np.reshape(image, image.shape[-3:])
 
             # Images have output values from 0-255, matplot expects values from 0-1
-            image = image / 255
-            plt.imshow(image)
-            plt.title('Predicted class: ' + str(prediction['classes']))
-            plt.show()
-            plt.waitforbuttonpress(timeout=1)
+            #image = image / 255
+            #plt.imshow(image)
+            #plt.title('Predicted class: ' + str(prediction['classes']))
+            #plt.show()
+            #plt.waitforbuttonpress(timeout=1)
 
             # if you use scientific mode of pycharm, this might not work. Feel free to find a solution.
             # closes all plots to prevent OOM errors of pycharm.
-            plt.close('all')
+            #plt.close('all')
 
         except Exception as e:
             print(e)
