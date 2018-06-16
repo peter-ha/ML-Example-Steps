@@ -5,8 +5,6 @@ from __future__ import print_function
 import argparse
 from os.path import join
 
-import matplotlib.pyplot as plt
-import numpy as np
 import tensorflow as tf
 
 # define the CLI arguments
@@ -195,45 +193,6 @@ def main(argv):
 
     print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
 
-    test_dataset = get_dataset('test',
-                               shuffle=True,
-                               batch_size=1,
-                               repeat=False,
-                               prefetch=1,
-                               buffer_size=5000
-                               ).make_one_shot_iterator()
-
-    next_batch = test_dataset.get_next()
-    while True:
-        try:
-            # TODO: This whole thing feels like an ugly hack. But works...
-            image = next_batch[0].eval()
-
-            predict_input_fn = tf.estimator.inputs.numpy_input_fn(
-                x=image,
-                num_epochs=1,
-                shuffle=False)
-
-            predictions = classifier.predict(input_fn=predict_input_fn)
-
-            prediction = predictions.__next__()
-
-            #image = np.reshape(image, image.shape[-3:])
-
-            # Images have output values from 0-255, matplot expects values from 0-1
-            #image = image / 255
-            #plt.imshow(image)
-            #plt.title('Predicted class: ' + str(prediction['classes']))
-            #plt.show()
-            #plt.waitforbuttonpress(timeout=1)
-
-            # if you use scientific mode of pycharm, this might not work. Feel free to find a solution.
-            # closes all plots to prevent OOM errors of pycharm.
-            #plt.close('all')
-
-        except Exception as e:
-            print(e)
-            break
 
 
 if __name__ == '__main__':
