@@ -3,14 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-from os.path import isdir, join
+from os.path import join
 
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-import urllib.request
-import util
-import zipfile
 
 # define the CLI arguments
 parser = argparse.ArgumentParser()
@@ -39,6 +36,8 @@ image_size = [image_size_cols, image_size_rows, image_size_channels]
 def prepare_image_fn(image_path, label):
     img_file = tf.read_file(image_path)
 
+    # TODO: This might fail from time to time. Take a close look at image 666.jpg. There are others like this :)
+    # TODO: see https://www.tensorflow.org/api_docs/python/tf/contrib/data/ignore_errors, I din't try it...
     img = tf.image.decode_image(img_file, channels=image_size_channels)
     img.set_shape([None, None, None])
 
@@ -164,28 +163,8 @@ def cnn_model_fn(features, labels, mode):
         mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 
-def ensure_data_is_available():
-
-    if not isdir(base_path):
-        print("sorted data is not there")
-        if not isdir("PetImages"):
-            print("unsorted data is not there, downloading it...")
-            urllib.request.urlretrieve("https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_3367a.zip")
-            print("done")
-            print("unzipping data")
-            zip_ref = zipfile.ZipFile("kagglecatsanddogs_3367a.zip", 'r')
-            zip_ref.extractall(".")
-            zip_ref.close()
-        print("done")
-        print("sorting data...")
-        util.prepare_dataset_structure()
-        print("done")
-
-
 def main(argv):
     args = parser.parse_args(argv[1:])
-
-    ensure_data_is_available()
 
     # TODO: change the model dir, if you want to start a new model
     classifier = tf.estimator.Estimator(
