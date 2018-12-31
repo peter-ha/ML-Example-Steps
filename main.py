@@ -19,7 +19,7 @@ CAT_LABEL = 0
 DOG_LABEL = 1
 
 # the basepath of the training images. Make sure to have the data setup in the described way.
-base_path = '/data'
+base_path = 'data'
 
 # Dimensions of the images. Preventing some magic numbers
 image_size_rows = 112
